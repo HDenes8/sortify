@@ -1,9 +1,10 @@
 {
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/build",
-  "devCommand": "cd frontend && npm start",
-  "env": {
-    "REACT_APP_API_BASE_URL": "@api_base_url"
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "installCommand": "npm install",
+  "devCommand": "npm start",
+  "git": {
+    "deploymentEnabled": true
   },
   "rewrites": [
     {
