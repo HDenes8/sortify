@@ -49,13 +49,6 @@ const SignUp = () => {
     });
   };
 
-  const unloadRecaptchaScript = () => {
-    const script = document.getElementById('recaptcha-script');
-    if (script) {
-      script.remove();
-    }
-  };
-
   const renderRecaptcha = useCallback(() => {
     if (window.grecaptcha) {
       window.grecaptcha.render('recaptcha-container', {

@@ -17,7 +17,7 @@ import './App.css';
 
 function AppRoutes() {
   const location = useLocation();
-  const { loading, showLoader, hideLoader } = useLoader();
+  const { loading, showLoader } = useLoader();
 
   useEffect(() => {
     let minTimer;

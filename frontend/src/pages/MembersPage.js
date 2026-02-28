@@ -10,7 +10,6 @@ const MembersPage = () => {
   const { project_id } = useParams();
   const [members, setMembers] = useState([]);
   const [error, setError] = useState(null);
-  const [projectName, setProjectName] = useState("");
   const [userRole, setUserRole] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -43,7 +42,6 @@ const MembersPage = () => {
 
       setMembers(sortedMembers);
       setUserRole(response.data.current_user_role);
-      setProjectName(response.data.project_name || "");
       setCurrentUser(response.data.current_user || null);
     } catch (err) {
       if (err.response && err.response.status === 403) {
@@ -60,7 +58,7 @@ const MembersPage = () => {
   useEffect(() => {
     fetchMembers();
   }, [project_id]);
-
+, hideLoader
   const handleInviteMember = async () => {
     const emailInput = prompt("Enter the email(s) to invite (comma-separated):");
     if (!emailInput) {

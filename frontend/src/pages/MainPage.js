@@ -10,13 +10,11 @@ import { API_BASE_URL } from '../config';
 const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
   const { hideLoader } = useLoader();
   const [projects, setProjects] = useState([]);
-  const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selectedRole, setSelectedRole] = useState(defaultRoleFilter);
   const [menuOpen, setMenuOpen] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 }); // Added hover position state
-  const [selectedFileIds, setSelectedFileIds] = useState([]); // Added this line
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
@@ -29,7 +27,6 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
           return;
         }
 
-        setUser(response.data.user);
         setProjects(response.data.roles || []);
         applyFilters(response.data.roles || [], searchQuery, defaultRoleFilter);
       } catch (error) {
@@ -42,7 +39,7 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
 
     fetchData();
   }, [navigate, defaultRoleFilter, hideLoader]);
-
+, searchQuery
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {

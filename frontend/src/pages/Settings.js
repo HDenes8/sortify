@@ -4,7 +4,6 @@ import styles from '../styles/Settings.module.css'; // Updated to scoped styles
 import { useLoader } from '../components/LoaderContext';
 
 const Settings = () => {
-  const [user, setUser] = useState({});
   const [profilePics, setProfilePics] = useState([]);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -31,13 +30,12 @@ const Settings = () => {
 
   useEffect(() => {
     Promise.all([fetchUserData(), fetchProfilePics()]).finally(() => hideLoader());
-  }, []);
+  }, [hideLoader]);
 
   const fetchUserData = async () => {
     try {
       const response = await axios.get('/api/user');
       console.log('Fetched user data:', response.data);
-      setUser(response.data);
       setFormData({
         fullName: response.data.full_name || '',
         nickname: response.data.nickname || '',

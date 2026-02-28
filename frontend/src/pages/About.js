@@ -8,7 +8,6 @@ const GITHUB_REPO_URL = "https://github.com/yourusername/sortify"; // Change to 
 const About = () => {
   const [checkingVersion, setCheckingVersion] = useState(true);
   const [showAnimatedButton, setShowAnimatedButton] = useState(false);
-  const [dotCount, setDotCount] = useState(1);
   const navigate = useNavigate();
   const { hideLoader } = useLoader();
 
@@ -24,14 +23,14 @@ const About = () => {
   useEffect(() => {
     if (!checkingVersion) return;
     const interval = setInterval(() => {
-      setDotCount((prev) => (prev % 3) + 1);
+      // Animate dots for version checking
     }, 400);
     return () => clearInterval(interval);
   }, [checkingVersion]);
 
   useEffect(() => {
     hideLoader();
-  }, []);
+  }, [hideLoader]);
 
   return (
     <div className={styles.aboutContainer}>

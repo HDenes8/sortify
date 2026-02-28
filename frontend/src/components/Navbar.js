@@ -42,7 +42,7 @@ const Navbar = () => {
     };
 
     fetchProjectInfo();
-  }, [window.location.pathname]);
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchProfile = async () => {

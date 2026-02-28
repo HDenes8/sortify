@@ -39,7 +39,6 @@ const ProjectsPage = () => {
   const [expandedFile, setExpandedFile] = useState(null);
   const [fileVersions, setFileVersions] = useState({});
   const [download_file_results, setDownloadFileResults] = useState({}); // To track download results 
-  const [error, setError] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
   const [hoveredComment, setHoveredComment] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
@@ -60,7 +59,7 @@ const ProjectsPage = () => {
     setHoverPosition({ x: buttonRect.left - 120, y: buttonRect.top }); // Position menu on the left
   };
 
-  const toggleFileVersions = (fileId) => {
+  const toggleFileVersionsDisplay = (fileId) => {
     if (!fileVersions[fileId]) {
       fetchFileVersions(fileId); // Fetch versions only if not loaded
     } else {
