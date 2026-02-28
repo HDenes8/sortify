@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/ProjectsPage.module.css'; // Import styles as an object
 import FormattedDate from '../components/FormattedDate';
 import { useLoader } from '../components/LoaderContext';
+import { API_BASE_URL } from '../config';
+
 
 function formatFileSize(sizeInBytes) {
   const units = ["bytes", "KB", "MB", "GB", "TB"];
@@ -99,7 +101,7 @@ const ProjectsPage = () => {
   // Fetch project data from the server
   const fetchProjectData = async () => {
     try {
-      const response = await fetch(`/project/${project_id}`);
+      const response = await fetch(`${API_BASE_URL}/project/${project_id}`);
       if (!response.ok) {
         const errorData = await response.json();
         showGlobalMessage(`Error: ${errorData.error}`);
@@ -122,7 +124,7 @@ const ProjectsPage = () => {
 
   const fetchFileVersions = async (fileId) => {
     try {
-      const response = await fetch(`/api/files/${fileId}/versions`);
+      const response = await fetch(`${API_BASE_URL}/api/files/${fileId}/versions`);
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.error || `Failed to fetch versions for file ${fileId}`);
@@ -222,7 +224,7 @@ const ProjectsPage = () => {
     }
 
     try {
-      const response = await fetch('/api/projects/download', {
+      const response = await fetch(`${API_BASE_URL}/api/projects/download`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selected_files: selectedFiles }),

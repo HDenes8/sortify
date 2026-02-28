@@ -5,6 +5,13 @@ import './styles.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// configure axios base URL from environment variable
+import axios from 'axios';
+import { API_BASE_URL } from './config';
+
+axios.defaults.baseURL = API_BASE_URL; // empty string falls back to relative paths
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

@@ -5,7 +5,9 @@ from os import path
 from flask_login import LoginManager
 from datetime import timedelta
 from flask_migrate import Migrate
+from flask_cors import CORS
 
+# database and migration objects (initialized later)
 db = SQLAlchemy()
 migrate = Migrate()
 DB_NAME = "database.db"
@@ -13,13 +15,21 @@ DB_NAME = "database.db"
 # Function to initialize the application
 def create_app():
     app = Flask(__name__, static_folder='static')
-    app.config['SECRET_KEY'] = 'szekret'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost:5432/sortify'
+    # configuration from environment (fallback to dev values)
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'szekret')
+    # DATABASE_URL is the standard name used by many hosting providers
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL',
+        'postgresql://postgres:password@localhost:5432/sortify'
+    )
     app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=1)
 
     UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)    
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
+
+    # enable CORS for API routes; allow origins from env or any
+    CORS(app, resources={r"/api/*": {"origins": os.environ.get('CORS_ORIGINS', '*')}})
 
     db.init_app(app)
     migrate.init_app(app, db)

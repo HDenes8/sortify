@@ -4,6 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/MainPage.module.css'; // Import styles as an object
 import FormattedDate from '../components/FormattedDate'; // adjust if needed
 import { useLoader } from '../components/LoaderContext';
+import { API_BASE_URL } from '../config';
+
 
 const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
   const { hideLoader } = useLoader();
@@ -98,7 +100,7 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
 
     selectedFileIds.forEach((fileId) => {
       const link = document.createElement("a");
-      link.href = `/api/projects/download/${fileId}`;
+      link.href = `${API_BASE_URL}/api/projects/download/${fileId}`;
       link.setAttribute("download", "");
       document.body.appendChild(link);
       link.click();
