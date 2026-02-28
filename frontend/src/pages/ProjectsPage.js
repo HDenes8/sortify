@@ -39,6 +39,7 @@ const ProjectsPage = () => {
   const [expandedFile, setExpandedFile] = useState(null);
   const [fileVersions, setFileVersions] = useState({});
   const [download_file_results, setDownloadFileResults] = useState({}); // To track download results 
+  const [error, setError] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
   const [hoveredComment, setHoveredComment] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });

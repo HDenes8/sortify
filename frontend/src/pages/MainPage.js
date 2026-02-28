@@ -38,8 +38,8 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
     };
 
     fetchData();
-  }, [navigate, defaultRoleFilter, hideLoader]);
-, searchQuery
+  }, [navigate, defaultRoleFilter, hideLoader, searchQuery]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {

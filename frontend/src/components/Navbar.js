@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css'; // Updated to scoped styles
 import {
   FaHome,
@@ -20,6 +20,7 @@ const Navbar = () => {
   const [projectInfo, setProjectInfo] = useState(null);
   const [logoutMessage, setLogoutMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetch project information if on ProjectsPage or MembersPage
   useEffect(() => {

@@ -57,8 +57,8 @@ const MembersPage = () => {
 
   useEffect(() => {
     fetchMembers();
-  }, [project_id]);
-, hideLoader
+  }, [project_id, hideLoader]);
+
   const handleInviteMember = async () => {
     const emailInput = prompt("Enter the email(s) to invite (comma-separated):");
     if (!emailInput) {
