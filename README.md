@@ -214,7 +214,7 @@ The application can be split between a static frontend and a Python backend with
    - Create a web service using this repo's `backend/` folder.
    - Add environment variables: `DATABASE_URL`, `SECRET_KEY`, `CORS_ORIGINS` (e.g. `https://<your‑frontend>`).
    - Build command: `pip install -r requirements.txt`.
-   - Start command: `gunicorn app:app` or `python app.py`.
+   - Start command: `gunicorn app:app` (make sure `gunicorn` is listed in requirements) or `python app.py`.
 
 2. **Frontend** on Vercel, Netlify or similar.  Use the `frontend/` folder.
    - Set `REACT_APP_API_BASE_URL` to the backend's public URL.
