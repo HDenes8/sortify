@@ -204,3 +204,23 @@ Before running the project, ensure you have the following installed:
 
 - Ensure that the backend and frontend are configured to communicate with each other. Update the API URLs in the frontend code if necessary.
 - For production deployment, consider using a reverse proxy (e.g., Nginx) to serve both the backend and frontend.
+
+## Deploying to a Cloud Host
+
+The application can be split between a static frontend and a Python backend with a managed PostgreSQL database.  A simple free setup is:
+
+1. **Backend + DB** on a platform like Render, Railway, or Fly.io.
+   - Create a PostgreSQL instance and note the `DATABASE_URL` it provides.
+   - Create a web service using this repo's `backend/` folder.
+   - Add environment variables: `DATABASE_URL`, `SECRET_KEY`, `CORS_ORIGINS` (e.g. `https://<your‑frontend>`).
+   - Build command: `pip install -r requirements.txt`.
+   - Start command: `gunicorn app:app` or `python app.py`.
+
+2. **Frontend** on Vercel, Netlify or similar.  Use the `frontend/` folder.
+   - Set `REACT_APP_API_BASE_URL` to the backend's public URL.
+
+3. **Push to GitHub** and connect the services to the repository.  They will deploy automatically.
+
+Remember to commit the `.env.example` files and update your local `.env` for development.
+
+These steps are described in detail in the repository's deploy notes (see section above).
