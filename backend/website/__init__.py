@@ -18,10 +18,14 @@ def create_app():
     # configuration from environment (fallback to dev values)
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'szekret')
     # DATABASE_URL is the standard name used by many hosting providers
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        'DATABASE_URL',
-        'postgresql://postgres:password@localhost:5432/sortify'
-    )
+    db_url = os.environ.get('DATABASE_URL')
+    if not db_url:
+        # Log an explicit warning so deploy logs make it clear why the connection fails.
+        app.logger.warning(
+            "DATABASE_URL not set; using localhost fallback which will not work in production."
+        )
+        db_url = 'postgresql://postgres:password@localhost:5432/sortify'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=1)
 
     UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
