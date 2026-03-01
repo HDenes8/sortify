@@ -38,7 +38,8 @@ def create_app():
     # Example: https://sortify-eight.vercel.app,https://localhost:3000
     cors_origins_env = os.environ.get('CORS_ORIGINS', 'https://sortify-eight.vercel.app')
     # Parse comma-separated origins into a list
-    cors_origins_list = [origin.strip() for origin in cors_origins_env.split(',')]
+    cors_origins_list = [origin.strip() for origin in cors_origins_env.split(',') if origin.strip()]
+    print("CORS configured origins:", cors_origins_list)  # debug output
     
     CORS(
         app,

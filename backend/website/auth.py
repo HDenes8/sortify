@@ -14,10 +14,13 @@ import random
 import bleach
 
 
+from flask_cors import cross_origin
+
 auth = Blueprint('auth', __name__)
 
 #login start
 @auth.route('/login', methods=['GET', 'POST'])
+@cross_origin(origins=["https://sortify-eight.vercel.app"], supports_credentials=True)
 def login():
     data = request.get_json()  
     email = data.get('email')
@@ -81,6 +84,7 @@ def is_valid_phone_number(number):
         return False
 
 @auth.route('/signup', methods=['POST'])
+@cross_origin(origins=["https://sortify-eight.vercel.app"], supports_credentials=True)
 def sign_up():
     if request.method == 'POST':
         data = request.get_json() 
