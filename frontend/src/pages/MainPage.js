@@ -15,6 +15,7 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
   const [selectedRole, setSelectedRole] = useState(defaultRoleFilter);
   const [menuOpen, setMenuOpen] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 }); // Added hover position state
+  const [selectedFileIds, setSelectedFileIds] = useState([]);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 

@@ -25,7 +25,7 @@ const Navbar = () => {
   // Fetch project information if on ProjectsPage or MembersPage
   useEffect(() => {
     const fetchProjectInfo = async () => {
-      const path = window.location.pathname;
+      const path = location.pathname;
       if (path.startsWith('/ProjectsPage') || path.startsWith('/MembersPage')) {
         const projectId = path.split('/').pop();
         try {
@@ -96,42 +96,42 @@ const Navbar = () => {
         <nav className={styles['navbar-sidebar-nav']}>
           <ul>
             <li
-              className={window.location.pathname === '/MainPage' ? styles['active'] : ''}
+              className={location.pathname === '/MainPage' ? styles['active'] : ''}
               onClick={() => navigate('/MainPage')}
             >
               <FaHome /> {!sidebarCollapsed && 'Main Page'}
             </li>
             <li
-              className={window.location.pathname === '/MyProjectsPage' ? styles['active'] : ''}
+                className={location.pathname === '/MyProjectsPage' ? styles['active'] : ''}
               onClick={() => navigate('/MyProjectsPage')}
             >
               <FaFolder /> {!sidebarCollapsed && 'My Projects'}
             </li>
             <li
-              className={window.location.pathname === '/favourite' ? `${styles['active']} ${styles['disabled']}` : styles['disabled']}
+              className={location.pathname === '/favourite' ? `${styles['active']} ${styles['disabled']}` : styles['disabled']}
             >
               <FaHeart style={{ color: 'grey', cursor: 'not-allowed' }} /> {!sidebarCollapsed && 'Favourite (under maintenance)'}
             </li>
             <li
-              className={window.location.pathname === '/invitations' ? styles['active'] : ''}
+              className={location.pathname === '/invitations' ? styles['active'] : ''}
               onClick={() => navigate('/invitations')}
             >
               <FaEnvelope /> {!sidebarCollapsed && 'Invitation'}
             </li>
             <li
-              className={window.location.pathname === '/create-project' ? styles['active'] : ''}
+              className={location.pathname === '/create-project' ? styles['active'] : ''}
               onClick={() => navigate('/create-project')}
             >
               <FaPlus /> {!sidebarCollapsed && 'Create New Project'}
             </li>
             <li
-              className={window.location.pathname === '/settings' ? styles['active'] : ''}
+              className={location.pathname === '/settings' ? styles['active'] : ''}
               onClick={() => navigate('/settings')}
             >
               <FaCog /> {!sidebarCollapsed && 'Settings'}
             </li>
             <li
-              className={window.location.pathname === '/about' ? styles['active'] : ''}
+              className={location.pathname === '/about' ? styles['active'] : ''}
               onClick={() => navigate('/about')}
               style={{ marginTop: 'auto' }}
             >
@@ -146,8 +146,8 @@ const Navbar = () => {
 
       <header className={styles['navbar-header']}>
         {projectInfo &&
-        (window.location.pathname.startsWith('/ProjectsPage') ||
-          window.location.pathname.startsWith('/MembersPage')) ? (
+        (location.pathname.startsWith('/ProjectsPage') ||
+          location.pathname.startsWith('/MembersPage')) ? (
           <div className={styles['project-info']}>
             <h1 className={styles['project-title']}>{projectInfo.name}</h1>
             <p className={styles['project-role']}>
@@ -155,7 +155,7 @@ const Navbar = () => {
             </p>
           </div>
         ) : (
-          <h1>{getPageTitle()}</h1>
+          <h1>{getPageTitle(location.pathname)}</h1>
         )}
         <div className={styles['user-profile']}>
           <img src={profile.avatar} alt="User" />
@@ -177,8 +177,8 @@ const Navbar = () => {
   );
 };
 
-function getPageTitle() {
-  const path = window.location.pathname;
+function getPageTitle(pathname) {
+  const path = pathname;
 
   switch (path) {
     case '/MainPage':
