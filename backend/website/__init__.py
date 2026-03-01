@@ -103,9 +103,9 @@ def create_database(app):
         init_dir = os.path.normpath(init_dir)
         if os.path.isdir(init_dir):
             for fname in sorted(os.listdir(init_dir)):
-                if not fname.lower().endswith(('.sql',)):
-                    continue
                 fpath = os.path.join(init_dir, fname)
+                if not os.path.isfile(fpath):
+                    continue
                 try:
                     with open(fpath, 'r', encoding='utf-8') as fh:
                         sql = fh.read()
