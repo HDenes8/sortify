@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/MainPage.module.css'; // Import styles as an object
 import FormattedDate from '../components/FormattedDate'; // adjust if needed
 import { useLoader } from '../components/LoaderContext';
@@ -15,7 +15,7 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
   const [selectedRole, setSelectedRole] = useState(defaultRoleFilter);
   const [menuOpen, setMenuOpen] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 }); // Added hover position state
-  const [selectedFileIds, setSelectedFileIds] = useState([]);
+  const [selectedFileIds] = useState([]);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
@@ -88,22 +88,6 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
 
   const openProject = (projectId) => {
     navigate(`/ProjectsPage/${projectId}`);
-  };
-
-  const handleDownloadSelected = () => {
-    if (selectedFileIds.length === 0) {
-      alert("No files selected for download.");
-      return;
-    }
-
-    selectedFileIds.forEach((fileId) => {
-      const link = document.createElement("a");
-      link.href = `${API_BASE_URL}/api/projects/download/${fileId}`;
-      link.setAttribute("download", "");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
   };
 
   return (

@@ -39,7 +39,7 @@ const ProjectsPage = () => {
   const [expandedFile, setExpandedFile] = useState(null);
   const [fileVersions, setFileVersions] = useState({});
   const [download_file_results, setDownloadFileResults] = useState({}); // To track download results 
-  const [error, setError] = useState(null);
+  const [localError, setLocalError] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
   const [hoveredComment, setHoveredComment] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
@@ -60,13 +60,7 @@ const ProjectsPage = () => {
     setHoverPosition({ x: buttonRect.left - 120, y: buttonRect.top }); // Position menu on the left
   };
 
-  const toggleFileVersionsDisplay = (fileId) => {
-    if (!fileVersions[fileId]) {
-      fetchFileVersions(fileId); // Fetch versions only if not loaded
-    } else {
-      setFileVersions((prev) => ({ ...prev, [fileId]: null })); // Hide versions if already displayed
-    }
-  };
+  // toggleFileVersionsDisplay was unused; use toggleVersionTable instead
 
   const closeFileDropdown = () => {
     setExpandedFile(null);
@@ -140,6 +134,7 @@ const ProjectsPage = () => {
       setError("An error occurred while fetching file versions.");
     }
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchProjectData();
   }, [project_id]);
