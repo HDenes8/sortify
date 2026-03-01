@@ -57,6 +57,7 @@ def logout():
 
 def verify_recaptcha(response):
     secret_key = os.getenv('RECAPTCHA_PRIVATE_KEY')
+    print("reCAPTCHA secret used:", secret_key)  # debug
     if not secret_key:
         # fallback for local testing (not recommended long term)
         secret_key = "6LeKEvEqAAAAACB2kZN3_QckJOu_nYtxpHuRWz2O"

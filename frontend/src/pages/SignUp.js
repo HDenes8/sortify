@@ -74,6 +74,9 @@ const SignUp = () => {
       return;
     }
 
+    // debug: ensure we actually have a token
+    console.log('submitting signup, captchaResponse=', formData.captchaResponse);
+
     try {
       const response = await axios.post('/signup', formData);
       setMessage(response.data.message);
