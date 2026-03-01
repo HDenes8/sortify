@@ -33,13 +33,18 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 
     # enable CORS for all routes with credential support (required for session-based auth with cookies)
-    # Allow specific origins or fall back to wildcard
-    cors_origins = os.environ.get('CORS_ORIGINS', '*')
+    # When credentials=True, origins CANNOT be '*'. Must be specific origin(s).
+    # Set CORS_ORIGINS environment variable with comma-separated list of approved origins
+    # Example: https://sortify-eight.vercel.app,https://localhost:3000
+    cors_origins_env = os.environ.get('CORS_ORIGINS', 'https://sortify-eight.vercel.app')
+    # Parse comma-separated origins into a list
+    cors_origins_list = [origin.strip() for origin in cors_origins_env.split(',')]
+    
     CORS(
         app,
         resources={
             r"/*": {
-                "origins": cors_origins,
+                "origins": cors_origins_list,
                 "supports_credentials": True,  # Enable sending credentials (cookies)
                 "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 "allow_headers": ["Content-Type", "Authorization"],
