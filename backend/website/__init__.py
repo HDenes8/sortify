@@ -27,6 +27,11 @@ def create_app():
         db_url = 'postgresql://postgres:password@localhost:5432/sortify'
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=1)
+    # cookie settings for cross-site (front-end on different domain)
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['REMEMBER_COOKIE_SAMESITE'] = 'None'
+    app.config['REMEMBER_COOKIE_SECURE'] = True
 
     UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)    
@@ -37,8 +42,8 @@ def create_app():
     # Set CORS_ORIGINS environment variable with comma-separated list of approved origins
     # Example: https://sortify-eight.vercel.app,https://localhost:3000
     cors_origins_env = os.environ.get('CORS_ORIGINS', 'https://sortify-eight.vercel.app')
-    # Parse comma-separated origins into a list
-    cors_origins_list = [origin.strip() for origin in cors_origins_env.split(',') if origin.strip()]
+    # Parse comma-separated origins into a list and strip trailing slashes
+    cors_origins_list = [origin.strip().rstrip('/') for origin in cors_origins_env.split(',') if origin.strip()]
     print("CORS configured origins:", cors_origins_list)  # debug output
     
     CORS(
