@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoader } from '../components/LoaderContext';
 import styles from '../styles/SignUp.module.css'; // Updated to scoped styles
+import { RECAPTCHA_SITE_KEY } from '../config';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ const SignUp = () => {
       if (!document.getElementById('recaptcha-script')) {
         const script = document.createElement('script');
         script.id = 'recaptcha-script';
-        script.src = 'https://www.google.com/recaptcha/api.js';
+        script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
         script.async = true;
         script.defer = true;
 
@@ -52,7 +53,7 @@ const SignUp = () => {
   const renderRecaptcha = useCallback(() => {
     if (window.grecaptcha) {
       window.grecaptcha.render('recaptcha-container', {
-        sitekey: '6LeKEvEqAAAAAI1MIfoiTYc_MBpk6GZ0hXO-fCot',
+        sitekey: RECAPTCHA_SITE_KEY || '6LeKEvEqAAAAAI1MIfoiTYc_MBpk6GZ0hXO-fCot',
         callback: handleCaptchaChange,
       });
     }

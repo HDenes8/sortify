@@ -47,13 +47,19 @@ def logout():
 
 
 # sign-up start
-# set up reCAPTCHA keys
-os.environ['RECAPTCHA_PUBLIC_KEY'] = "6LeKEvEqAAAAAI1MIfoiTYc_MBpk6GZ0hXO-fCot" #site_key
-os.environ['RECAPTCHA_PRIVATE_KEY'] = "6LeKEvEqAAAAACB2kZN3_QckJOu_nYtxpHuRWz2O" #your_secret_key
+# reCAPTCHA keys are loaded from environment so they can be changed per deployment
+# (e.g. development vs. production).  set these in Render or via dotenv.
+# Example:
+#   RECAPTCHA_PUBLIC_KEY=6LeKEvEqAAAAAI1MIfoiTYc_MBpk6GZ0hXO-fCot
+#   RECAPTCHA_PRIVATE_KEY=6LeKEvEqAAAAACB2kZN3_QckJOu_nYtxpHuRWz2O
 
 # Verify reCAPTCHA function
+
 def verify_recaptcha(response):
-    secret_key = "6LeKEvEqAAAAACB2kZN3_QckJOu_nYtxpHuRWz2O"  # Replace with your actual secret key
+    secret_key = os.getenv('RECAPTCHA_PRIVATE_KEY')
+    if not secret_key:
+        # fallback for local testing (not recommended long term)
+        secret_key = "6LeKEvEqAAAAACB2kZN3_QckJOu_nYtxpHuRWz2O"
     verify_url = "https://www.google.com/recaptcha/api/siteverify"
     payload = {'secret': secret_key, 'response': response}
     result = requests.post(verify_url, data=payload).json()
