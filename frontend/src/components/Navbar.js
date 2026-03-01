@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/Navbar.module.css'; // Updated to scoped styles
 import {
@@ -54,8 +55,10 @@ const Navbar = () => {
           return;
         }
 
-        // Set the fetched data to state
-        setProfile(profileResponse.data || { name: '', avatar: '/static/profile_pics/default.png', nickname: '', nickname_id: '' });
+        // Normalize avatar URL to use backend API base when needed
+        const data = profileResponse.data || { name: '', avatar: '/static/profile_pics/default.png', nickname: '', nickname_id: '' };
+        const avatar = data.avatar && data.avatar.startsWith('/static') ? `${API_BASE_URL ? API_BASE_URL.replace(/\/$/, '') : ''}${data.avatar}` : data.avatar;
+        setProfile({ ...data, avatar });
       } catch (error) {
         console.error('Error fetching profile data:', error);
         navigate('/login');

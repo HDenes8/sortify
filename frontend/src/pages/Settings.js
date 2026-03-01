@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 import styles from '../styles/Settings.module.css'; // Updated to scoped styles
 import { useLoader } from '../components/LoaderContext';
 
@@ -275,7 +276,7 @@ const Settings = () => {
                     checked={pic === formData.profilePic}
                     onChange={handleProfilePicChange}
                   />
-                  <img src={`/static/profile_pics/${pic}`} alt={pic} className={styles['profile-pic-thumb']} />
+                  <img src={`${API_BASE_URL ? API_BASE_URL.replace(/\/$/, '') : ''}/static/profile_pics/${pic}`} alt={pic} className={styles['profile-pic-thumb']} />
                 </label>
               ))
             ) : (

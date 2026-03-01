@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/MainPage.module.css'; // Import styles as an object
 import FormattedDate from '../components/FormattedDate'; // adjust if needed
@@ -162,7 +163,7 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
                   </td>
                   <td data-label="Owner">
                     <img
-                      src={`/static/profile_pics/${
+                      src={`${API_BASE_URL ? API_BASE_URL.replace(/\/$/, '') : ''}/static/profile_pics/${
                         project.creator_profile_picture || 'default.png'
                       }`}
                       alt={`${project.nickname || 'Unknown'}#${project.nickname_id || 'No ID'}`} 
