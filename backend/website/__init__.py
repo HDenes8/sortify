@@ -32,8 +32,20 @@ def create_app():
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)    
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 
-    # enable CORS for API routes; allow origins from env or any
-    CORS(app, resources={r"/api/*": {"origins": os.environ.get('CORS_ORIGINS', '*')}})
+    # enable CORS for all routes with credential support (required for session-based auth with cookies)
+    # Allow specific origins or fall back to wildcard
+    cors_origins = os.environ.get('CORS_ORIGINS', '*')
+    CORS(
+        app,
+        resources={
+            r"/*": {
+                "origins": cors_origins,
+                "supports_credentials": True,  # Enable sending credentials (cookies)
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+            }
+        }
+    )
 
     db.init_app(app)
     migrate.init_app(app, db)

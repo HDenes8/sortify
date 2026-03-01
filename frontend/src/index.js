@@ -2,14 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './styles.css';
+// Import config early to initialize axios globally with base URL and credentials
+import './config';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
-// configure axios base URL from environment variable
-import axios from 'axios';
-import { API_BASE_URL } from './config';
-
-axios.defaults.baseURL = API_BASE_URL; // empty string falls back to relative paths
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

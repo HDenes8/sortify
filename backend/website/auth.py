@@ -10,13 +10,11 @@ from wtforms import StringField, PasswordField, SubmitField
 from flask_wtf.recaptcha import RecaptchaField
 import os
 import requests
-from flask_cors import CORS
 import random
 import bleach
 
 
 auth = Blueprint('auth', __name__)
-CORS(auth)
 
 #login start
 @auth.route('/login', methods=['GET', 'POST'])
