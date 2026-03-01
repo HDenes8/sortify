@@ -97,31 +97,5 @@ def create_app():
 def create_database(app):
     with app.app_context():
         db.create_all()
-        # Load and execute any SQL files in backend/db-init to ensure stored
-        # procedures and helper SQL objects are present in the database.
-        init_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'db-init')
-        init_dir = os.path.normpath(init_dir)
-        if os.path.isdir(init_dir):
-            for fname in sorted(os.listdir(init_dir)):
-                fpath = os.path.join(init_dir, fname)
-                if not os.path.isfile(fpath):
-                    continue
-                try:
-                    with open(fpath, 'r', encoding='utf-8') as fh:
-                        sql = fh.read()
-                    if sql.strip():
-                        # Use a raw connection to execute multi-statement SQL safely
-                        with db.engine.connect() as conn:
-                            for stmt in [s for s in sql.split(";\n") if s.strip()]:
-                                try:
-                                    conn.execute(stmt)
-                                except Exception:
-                                    # fallback: try executing the whole SQL blob at once
-                                    try:
-                                        conn.execute(sql)
-                                    except Exception as e:
-                                        app.logger.warning(f"Failed executing {fname}: {e}")
-                                        break
-                except Exception as e:
-                    app.logger.warning(f"Unable to read/execute init SQL {fpath}: {e}")
     print('Checked/created tables (if missing).')
+
