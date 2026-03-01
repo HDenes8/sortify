@@ -2,6 +2,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "installCommand": "npm install",
+  "env": {
+    "CI": "false"
+  },
   "devCommand": "npm start",
   "git": {
     "deploymentEnabled": true
