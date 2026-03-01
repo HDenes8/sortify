@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../styles/MainPage.module.css'; // Import styles as an object
 import FormattedDate from '../components/FormattedDate'; // adjust if needed
 import { useLoader } from '../components/LoaderContext';
-import { API_BASE_URL } from '../config';
 
 
 const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
@@ -15,7 +14,6 @@ const MainPage = ({ defaultRoleFilter = '', showFilterDropdown = true }) => {
   const [selectedRole, setSelectedRole] = useState(defaultRoleFilter);
   const [menuOpen, setMenuOpen] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 }); // Added hover position state
-  const [selectedFileIds] = useState([]);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
