@@ -23,7 +23,7 @@ const MembersPage = () => {
     setTimeout(() => setGlobalMessage(''), timeout);
   };
 
-  const fetchMembers = async () => {
+  const fetchMembers = React.useCallback(async () => {
     try {
       const response = await axios.get(`/api/projects/${project_id}/members`, {
         withCredentials: true,
@@ -53,12 +53,11 @@ const MembersPage = () => {
     } finally {
       hideLoader();
     }
-  };
+  }, [project_id, hideLoader, navigate]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchMembers();
-  }, [project_id, hideLoader]);
+  }, [project_id, hideLoader, fetchMembers]);
 
   // eslint-disable-next-line no-unused-vars
   const handleInviteMember = async () => {

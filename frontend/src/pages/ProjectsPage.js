@@ -39,7 +39,7 @@ const ProjectsPage = () => {
   const [expandedFile, setExpandedFile] = useState(null);
   const [fileVersions, setFileVersions] = useState({});
   const [download_file_results, setDownloadFileResults] = useState({}); // To track download results 
-  const [localError, setLocalError] = useState(null);
+  const [localError, setLocalError] = useState(null); // used for version fetch errors
   const [showDescription, setShowDescription] = useState(false);
   const [hoveredComment, setHoveredComment] = useState(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
@@ -93,7 +93,7 @@ const ProjectsPage = () => {
 
   // Fetch project data
   // Fetch project data from the server
-  const fetchProjectData = async () => {
+  const fetchProjectData = React.useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/project/${project_id}`);
       if (!response.ok) {
@@ -114,14 +114,14 @@ const ProjectsPage = () => {
     } finally {
       hideLoader();
     }
-  };
+  }, [project_id, showGlobalMessage, hideLoader]);
 
   const fetchFileVersions = async (fileId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/files/${fileId}/versions`);
       if (!response.ok) {
         const errorData = await response.json();
-        setError(errorData.error || `Failed to fetch versions for file ${fileId}`);
+        setLocalError(errorData.error || `Failed to fetch versions for file ${fileId}`);
         return;
       }
       const data = await response.json();
@@ -131,13 +131,12 @@ const ProjectsPage = () => {
       }));
     } catch (error) {
       console.error(`Error fetching versions for file ${fileId}:`, error);
-      setError("An error occurred while fetching file versions.");
+      setLocalError("An error occurred while fetching file versions.");
     }
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchProjectData();
-  }, [project_id]);
+  }, [fetchProjectData, project_id]);
 
   const handleFileChange = (e) => {
     setUploadData({ ...uploadData, file: e.target.files[0] });
@@ -292,6 +291,9 @@ const ProjectsPage = () => {
     <div className={styles['project-page-container']}>
       {globalMessage && (
         <div className="global-message-popup">{globalMessage}</div>
+      )}
+      {localError && (
+        <div className="error-message">{localError}</div>
       )}
       <div className={styles['top-buttons']}>
         <button
