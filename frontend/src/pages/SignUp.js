@@ -5,6 +5,18 @@ import { useLoader } from '../components/LoaderContext';
 import styles from '../styles/SignUp.module.css'; // Updated to scoped styles
 import { RECAPTCHA_SITE_KEY } from '../config';
 
+// Expose site key for easy debugging in the browser console
+if (typeof window !== 'undefined') {
+  try {
+    window.RECAPTCHA_SITE_KEY = RECAPTCHA_SITE_KEY;
+    // log once so we can confirm the built bundle contains the expected key
+    // this is temporary and can be removed after debugging
+    console.log('RECAPTCHA_SITE_KEY (from config):', RECAPTCHA_SITE_KEY);
+  } catch (e) {
+    /* ignore */
+  }
+}
+
 const SignUp = () => {
   const [formData, setFormData] = useState({
     fullName: '',
