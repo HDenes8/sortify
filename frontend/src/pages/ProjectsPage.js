@@ -198,21 +198,29 @@ const ProjectsPage = () => {
     formData.append("title", uploadData.title);
 
     try {
-      const response = await fetch(`/api/projects/${project_id}/upload`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${project_id}/upload`, {
         method: "POST",
         body: formData,
         credentials: 'include',
       });
 
       const rawText = await response.text();
-      const jsonData = JSON.parse(rawText);
+      let jsonData = null;
+      if (rawText.trim()) {
+        try {
+          jsonData = JSON.parse(rawText);
+        } catch (_) {
+          // Non-JSON or malformed response (e.g. HTML error page)
+        }
+      }
 
       if (response.ok) {
         setShowUploadModal(false);
         showGlobalMessage("File uploaded successfully!");
         fetchProjectData(); // Refresh the file list
       } else {
-        showGlobalMessage(`Error: ${jsonData.error || 'Upload failed'}`);
+        const errorMsg = (jsonData && jsonData.error) || response.statusText || 'Upload failed';
+        showGlobalMessage(`Error: ${errorMsg}`);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -233,21 +241,30 @@ const ProjectsPage = () => {
     formData.append("main_file_id", versionUploadTarget.file_data_id); // Link to the main file
   
     try {
-      const response = await fetch(`/api/projects/${project_id}/upload`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${project_id}/upload`, {
         method: "POST",
         body: formData,
         credentials: 'include',
       });
-  
-      const jsonData = await response.json();
-  
+
+      const rawText = await response.text();
+      let jsonData = null;
+      if (rawText.trim()) {
+        try {
+          jsonData = JSON.parse(rawText);
+        } catch (_) {
+          // Non-JSON or malformed response
+        }
+      }
+
       if (response.ok) {
         setVersionUploadTarget(null);
         setVersionUploadData({ file: null, comment: '' });
         showGlobalMessage("Version uploaded!");
         fetchProjectData(); // Refresh file list
       } else {
-        showGlobalMessage(`Error: ${jsonData.error}`);
+        const errorMsg = (jsonData && jsonData.error) || response.statusText || 'Upload failed';
+        showGlobalMessage(`Error: ${errorMsg}`);
       }
     } catch (err) {
       console.error("Upload version failed:", err);
