@@ -1068,12 +1068,66 @@ def home():
 
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
-    # Fetch user and project data using the stored procedure
-    query = text("SELECT * FROM get_user_projects(:user_id_param)")
-    result = db.session.execute(query, {"user_id_param": user.user_id}).mappings()
 
-    roles_list = [dict(row) for row in result]  
+    # Build project list with same shape as get_user_projects stored procedure (ORM-based fallback)
+    user_projects = User_Project.query.filter_by(user_id=user.user_id, is_removed=False).all()
+    roles_list = []
+
+    for up in user_projects:
+        project = Project.query.get(up.project_id)
+        if not project:
+            continue
+        creator = User_profile.query.get(project.creator_id) if project.creator_id else None
+
+        # Latest version per file in this project (for has_latest and last_modified)
+        latest_per_file = (
+            db.session.query(File_version)
+            .join(File_data, File_version.file_data_id == File_data.file_data_id)
+            .filter(File_data.project_id == project.project_id, File_version.last_version == True)
+            .all()
+        )
+
+        # has_latest: no file has a newer version the user hasn't downloaded (and not uploaded by user)
+        has_latest = True
+        last_modified_date = project.created_date
+        last_modified_by = "Unknown"
+
+        for fv in latest_per_file:
+            if fv.upload_date and (last_modified_date is None or fv.upload_date > last_modified_date):
+                last_modified_date = fv.upload_date
+                uploader = User_profile.query.get(fv.user_id)
+                last_modified_by = uploader.full_name if uploader else "Unknown"
+            if fv.user_id == user.user_id:
+                continue
+            ld = Last_download.query.filter_by(
+                user_id=user.user_id,
+                file_data_id=fv.file_data_id,
+                version_id=fv.version_id,
+            ).first()
+            if not ld:
+                has_latest = False
+
+        created_dt = project.created_date
+        last_modified_dt = last_modified_date or created_dt
+
+        roles_list.append({
+            "project_id": project.project_id,
+            "project_name": project.name or "",
+            "role": up.role.value if hasattr(up.role, "value") else up.role,
+            "created_date": created_dt.isoformat() if created_dt else None,
+            "creator_name": creator.full_name if creator else "Unknown",
+            "creator_profile_picture": creator.profile_pic if creator and creator.profile_pic else "default.png",
+            "has_latest": has_latest,
+            "description": project.description or "",
+            "last_modified_by": last_modified_by,
+            "last_modified_date": last_modified_dt.isoformat() if last_modified_dt else None,
+            "nickname": creator.nickname if creator else None,
+            "nickname_id": creator.nickname_id if creator else None,
+        })
+
+    # Sort: has_latest ASC (False first), then last_modified_date DESC (stable sort)
+    roles_list.sort(key=lambda r: (r["last_modified_date"] or ""), reverse=True)
+    roles_list.sort(key=lambda r: (0 if r["has_latest"] else 1))
 
     response_data = {
         "user": {
@@ -1086,7 +1140,7 @@ def home():
         },
         "roles": roles_list
     }
-    
+
     return jsonify(response_data)
 # Home end
 
