@@ -23,6 +23,35 @@ function truncateComment(comment) {
   return comment.length > 30 ? comment.slice(0, 30) + '...' : comment;
 }
 
+// Helper for JSON API calls that need authentication cookies
+async function fetchJsonWithAuth(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: 'include',
+    ...options,
+  });
+
+  const contentType = response.headers.get('content-type') || '';
+  const isJson = contentType.includes('application/json');
+  let data = null;
+
+  if (isJson) {
+    try {
+      data = await response.json();
+    } catch (err) {
+      console.error(`Failed to parse JSON from ${url}:`, err);
+    }
+  } else {
+    try {
+      const text = await response.text();
+      console.warn(`Non-JSON response from ${url}:`, text);
+    } catch (err) {
+      console.error(`Failed to read non-JSON response from ${url}:`, err);
+    }
+  }
+
+  return { response, data };
+}
+
 const ProjectsPage = () => {
   const { project_id } = useParams();
   const navigate = useNavigate();
@@ -95,13 +124,19 @@ const ProjectsPage = () => {
   // Fetch project data from the server
   const fetchProjectData = React.useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/project/${project_id}`);
+      const { response, data } = await fetchJsonWithAuth(`${API_BASE_URL}/project/${project_id}`);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        showGlobalMessage(`Error: ${errorData.error}`);
+        const errorMessage =
+          (data && data.error) || `Request failed with status ${response.status}`;
+        showGlobalMessage(`Error: ${errorMessage}`);
         return;
       }
-      const data = await response.json();
+
+      if (!data) {
+        showGlobalMessage('Unexpected empty response from server.');
+        return;
+      }
       console.log("Project data:", data); // Debugging
 
       const sortedFiles = data.files.sort((a, b) => new Date(b.upload_date) - new Date(a.upload_date));
@@ -118,13 +153,21 @@ const ProjectsPage = () => {
 
   const fetchFileVersions = async (fileId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/files/${fileId}/versions`);
+      const { response, data } = await fetchJsonWithAuth(
+        `${API_BASE_URL}/api/files/${fileId}/versions`
+      );
+
       if (!response.ok) {
-        const errorData = await response.json();
-        setLocalError(errorData.error || `Failed to fetch versions for file ${fileId}`);
+        const errorMessage =
+          (data && data.error) || `Failed to fetch versions for file ${fileId}`;
+        setLocalError(errorMessage);
         return;
       }
-      const data = await response.json();
+
+      if (!data || !data.version_history) {
+        setLocalError(`Unexpected response while fetching versions for file ${fileId}`);
+        return;
+      }
       setFileVersions((prev) => ({
         ...prev,
         [fileId]: data.version_history,
@@ -158,6 +201,7 @@ const ProjectsPage = () => {
       const response = await fetch(`/api/projects/${project_id}/upload`, {
         method: "POST",
         body: formData,
+        credentials: 'include',
       });
 
       const rawText = await response.text();
@@ -192,6 +236,7 @@ const ProjectsPage = () => {
       const response = await fetch(`/api/projects/${project_id}/upload`, {
         method: "POST",
         body: formData,
+        credentials: 'include',
       });
   
       const jsonData = await response.json();
@@ -222,6 +267,7 @@ const ProjectsPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selected_files: selectedFiles }),
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -236,8 +282,28 @@ const ProjectsPage = () => {
         setShowDownloadModal(false);
         showGlobalMessage("Download started.");
       } else {
-        const errorData = await response.json();
-        showGlobalMessage(`Error: ${errorData.error || 'Failed to download files'}`);
+        let errorMessage = 'Failed to download files';
+        const contentType = response.headers.get('content-type') || '';
+
+        if (contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.error) {
+              errorMessage = errorData.error;
+            }
+          } catch (err) {
+            console.error('Failed to parse JSON error response for download:', err);
+          }
+        } else {
+          try {
+            const text = await response.text();
+            console.warn('Non-JSON error response for download:', text);
+          } catch (err) {
+            console.error('Failed to read non-JSON error response for download:', err);
+          }
+        }
+
+        showGlobalMessage(`Error: ${errorMessage}`);
       }
     } catch (error) {
       console.error("Error downloading files:", error);
